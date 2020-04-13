@@ -1,23 +1,21 @@
-resource "aws_api_gateway_method" "method" {
-  rest_api_id        = var.api_id
+module "eventbridge_integration" {
+  source = "github.com/barneyparker/terraform-aws-api-generic"
+
+  api_id             = var.api_id
   resource_id        = var.resource_id
   http_method        = var.http_method
   authorization      = var.authorization
-  request_parameters = var.request_parameters
-}
+  method_request_parameters = var.method_request_parameters
 
-resource "aws_api_gateway_integration" "integration" {
-  rest_api_id             = var.api_id
-  resource_id             = var.resource_id
-  http_method             = aws_api_gateway_method.method.http_method
   integration_http_method = "POST"
   type                    = "AWS"
   uri                     = "arn:aws:apigateway:eu-west-1:events:action/PutEvents"
   credentials             = aws_iam_role.eventbridge_put.arn
-  request_parameters = {
+
+  integration_request_parameters = merge(var.integration_request_parameters, {
     "integration.request.header.X-Amz-Target" = "'AWSEvents.PutEvents'"
     "integration.request.header.Content-Type" = "'application/x-amz-json-1.1'"
-  }
+  })
 
   request_templates = {
     "application/json" = <<-EOT
@@ -35,26 +33,8 @@ resource "aws_api_gateway_integration" "integration" {
       }
     EOT
   }
-}
 
-resource "aws_api_gateway_integration_response" "integration_response" {
-  count = length(var.responses)
-
-  rest_api_id        = var.api_id
-  resource_id        = var.resource_id
-  http_method        = aws_api_gateway_method.method.http_method
-  status_code        = var.responses[count.index].status_code
-  selection_pattern  = var.responses[count.index].selection_pattern
-  response_templates = var.responses[count.index].templates
-}
-
-resource "aws_api_gateway_method_response" "method_response" {
-  count = length(var.responses)
-
-  rest_api_id = var.api_id
-  resource_id = var.resource_id
-  http_method = aws_api_gateway_method.method.http_method
-  status_code = var.responses[count.index].status_code
+  responses = var.responses
 }
 
 resource "aws_iam_role" "eventbridge_put" {

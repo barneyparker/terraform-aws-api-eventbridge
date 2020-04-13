@@ -12,11 +12,15 @@ variable "authorization" {
   default     = "NONE"
 }
 
-variable "request_parameters" {
+variable "method_request_parameters" {
   type        = map
   default     = {}
 }
 
+variable "integration_request_parameters" {
+  type        = map
+  default     = {}
+}
 
 #variable "request_templates" {
 #  type        = map
