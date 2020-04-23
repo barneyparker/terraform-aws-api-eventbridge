@@ -28,6 +28,8 @@ module "api-eventbridge" {
     "timestamp"  = "$context.requestTimeEpoch"
   }
 
+  model = var.model
+
   responses = [
     {
       status_code       = "200"

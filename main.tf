@@ -1,6 +1,7 @@
 module "eventbridge_integration" {
   source = "github.com/barneyparker/terraform-aws-api-generic"
 
+  name               = var.name
   api_id             = var.api_id
   resource_id        = var.resource_id
   http_method        = var.http_method
@@ -11,6 +12,10 @@ module "eventbridge_integration" {
   type                    = "AWS"
   uri                     = "arn:aws:apigateway:eu-west-1:events:action/PutEvents"
   credentials             = aws_iam_role.eventbridge_put.arn
+
+  request_validator_id = var.request_validator_id
+
+  model = var.model
 
   integration_request_parameters = merge(var.integration_request_parameters, {
     "integration.request.header.X-Amz-Target" = "'AWSEvents.PutEvents'"

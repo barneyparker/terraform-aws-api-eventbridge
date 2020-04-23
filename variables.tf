@@ -12,20 +12,25 @@ variable "authorization" {
   default     = "NONE"
 }
 
+variable "request_validator_id" {
+  type        = string
+  description = "Request Validator Id"
+}
+
 variable "method_request_parameters" {
   type        = map
   default     = {}
+}
+
+variable "model" {
+  type    = string
+  default = "Empty"
 }
 
 variable "integration_request_parameters" {
   type        = map
   default     = {}
 }
-
-#variable "request_templates" {
-#  type        = map
-#  default     = {}
-#}
 
 variable "bus_name" {
 }
